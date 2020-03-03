@@ -1,5 +1,5 @@
 import React from "react";
-import ApodOfTheDay from "./Components/ApodOfTheDay.component";
+import Apod from "./Components/Apod.component";
 
 import "./App.css";
 
@@ -7,7 +7,7 @@ function App() {
 
   return (
     <div className="App">
-      <ApodOfTheDay />
+      <Apod />
     </div>
   );
 }

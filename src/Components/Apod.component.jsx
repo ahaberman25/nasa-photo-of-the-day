@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-function ApodOfTheDay() {
+function Apod() {
     // const [apod, setApod] = useState([]);
 
     // useEffect(() => {
@@ -23,4 +23,4 @@ function ApodOfTheDay() {
     );
 }
 
-export default ApodOfTheDay;
+export default Apod;
