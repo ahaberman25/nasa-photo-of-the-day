@@ -10,6 +10,7 @@
 
 # production
 /build
+/Components/holddata.js
 
 # misc
 .DS_Store
