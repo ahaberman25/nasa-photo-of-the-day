@@ -1,25 +1,82 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import styled from "styled-components";
+
+import bgImg from '../img/background-img.jpg'
+
 
 function Apod() {
-    // const [apod, setApod] = useState([]);
+    // setState of the data
+    const [apod, setApod] = useState([]);
 
-    // useEffect(() => {
-    //     axios.get("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY").then(response => {
-    //         setApod(response.data);
-    //     });
-    // }, []);
+    // pull in data with a useEffect
+    useEffect(() => {
+        axios.get("https://api.nasa.gov/planetary/apod?api_key=pVzYAArvN8c8Fez9O5lg6h3ciz0pSOuEMCPKSNav").then(response => {
+            setApod(response.data);
+        });
+    }, []);
 
-    // console.log(apod)
+    // console log data to make sure its coming in
+    console.log(apod)
+
+    // Styles
+    const Container = styled.div`
+        width: 100vw;
+        height: 100vh;
+        background-image: url(${bgImg});
+    `;
+    const Title = styled.div`
+        color: purple;
+        font-size: 40px;
+        background-color: whitesmoke;
+        margin-bottom: 10px;
+    `;
+    const ImgContainer = styled.div`
+        background-color: whitesmoke;
+        border: 2px solid grey;
+        border-radius: 10px;
+        width: 40%;
+        margin: 0 auto;
+        padding: 2%;
+    `;
+    const Explination = styled.div`
+        padding: 1%;
+        margin: 10px auto;
+        width: 60%;
+        background-color: #FFFAFA;
+        border: 2px solid grey;
+        border-radius: 10px;
+        text-align: left;
+    `;
+    const Date = styled.div`
+        text-align: center;
+        padding-top: 10px;
+    `;
 
     return (
-        <div className="App">
-            <div className="title">Sharpless-308: The Dolphin Nebula</div>
-            <img className="image" src="https://apod.nasa.gov/apod/image/2003/Dolphin_Pleiades_960.jpg" />
-            <div className="explanation">Blown by fast winds from a hot, massive star, this cosmic bubble is much larger than the dolphin it appears to be. Cataloged as Sharpless 2-308 it lies some 5,200 light-years away toward the constellation of the Big Dog (Canis Major) and covers slightly more of the sky than a Full Moon. That corresponds to a diameter of 60 light-years at its estimated distance. The massive star that created the bubble, a Wolf-Rayet star, is the bright one near the center of the nebula. Wolf-Rayet stars have over 20 times the mass of the Sun and are thought to be in a brief, pre-supernova phase of massive star evolution. Fast winds from this Wolf-Rayet star create the bubble-shaped nebula as they sweep up slower moving material from an earlier phase of evolution. The windblown nebula has an age of about 70,000 years. Relatively faint emission captured in the featured expansive image is dominated by the glow of ionized oxygen atoms mapped to a blue hue.</div>
-            <div className="date">2020-03-02</div>
-            <div className="copyright">ChilesopePleaides Astrophotography Team</div>
-        </div>
+        <Container>
+            <Title>{apod.title}</Title>
+            <ImgContainer>
+                {apod.media_type === "image" ? (
+                    <img className="image" alt={apod.title} src={apod.url} width='640' height='390' />
+                ) : (
+                    <iframe src={apod.url}  
+                    width='640'
+                    height='390'       
+                    frameBorder='0'
+                    allow='autoplay; encrypted-media'
+                    allowFullScreen
+                    title={apod.title} />
+                )}
+            </ImgContainer>
+            <Explination>
+                {apod.explanation} 
+                <br /> 
+                <Date className="date">{apod.date}</Date>
+                <br /> 
+                {apod.copyright}
+            </Explination>
+        </Container>
     );
 }
 
