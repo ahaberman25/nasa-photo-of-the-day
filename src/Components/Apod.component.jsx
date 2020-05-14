@@ -1,33 +1,86 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import {DateSingleInput} from '@datepicker-react/styled'
 
-import bgImg from '../img/background-img.jpg'
+import bgImg from '../img/background-img.jpg';
 
+
+const date = new Date();
+
+const initialState = {
+    date: date,
+    showDatepicker: false,
+  }
+
+function reducer(state, action) {
+    switch (action.type) {
+      case 'focusChange':
+        return {...state, showDatepicker: action.payload}
+      case 'dateChange':
+        return action.payload
+      default:
+        throw new Error()
+    }
+  }
+
+ 
 
 function Apod() {
     // setState of the data
     const [apod, setApod] = useState([]);
+    // setState for date
+    const [state, dispatch] = useReducer(reducer, initialState)
+
+    var datePicked = state.date;
+    var dd = datePicked.getDate();
+    
+    var mm = datePicked.getMonth()+1; 
+    var yyyy = datePicked.getFullYear();
+    if(dd<10) 
+    {
+        dd='0'+dd;
+    } 
+    
+    if(mm<10) 
+    {
+        mm='0'+mm;
+    } 
+    
+    datePicked = yyyy+'-'+mm+'-'+dd;
+    
+    console.log('changes', datePicked);
+
+    const [theDate, setTheDate] = useState(datePicked)
+    console.log('thedate', theDate)
+    // var dateSet = setTheDate(datePicked)
+ 
 
     // pull in data with a useEffect
     useEffect(() => {
-        axios.get("https://api.nasa.gov/planetary/apod?api_key=pVzYAArvN8c8Fez9O5lg6h3ciz0pSOuEMCPKSNav").then(response => {
+        axios.get("https://api.nasa.gov/planetary/apod?api_key=pVzYAArvN8c8Fez9O5lg6h3ciz0pSOuEMCPKSNav&date=" + datePicked).then(response => {
             setApod(response.data);
         });
     }, []);
 
     // console log data to make sure its coming in
-    console.log(apod)
+    console.log('data')
+
+    
+    
+
 
     // Styles
     const Container = styled.div`
-        width: 100vw;
-        height: 100vh;
-        background-image: url(${bgImg});
+        background: url(${bgImg}) no-repeat center center fixed; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
     `;
     const Title = styled.div`
         color: purple;
-        font-size: 40px;
+        font-size: 3rem;
         background-color: whitesmoke;
         margin-bottom: 10px;
     `;
@@ -38,6 +91,10 @@ function Apod() {
         width: 40%;
         margin: 0 auto;
         padding: 2%;
+    `;
+    const Img = styled.img`
+        width: 75%;
+        height: 75%;
     `;
     const Explination = styled.div`
         padding: 1%;
@@ -53,12 +110,20 @@ function Apod() {
         padding-top: 10px;
     `;
 
+    
+
     return (
-        <Container>
-            <Title>{apod.title}</Title>
-            <ImgContainer>
+        <Container className='container'>
+            <Title className='title'>{apod.title}</Title>
+            <ImgContainer className='imgContainer'>
+            <DateSingleInput
+                onDateChange={data => dispatch({type: 'dateChange', payload: data})}
+                onFocusChange={focusedInput => dispatch({type: 'focusChange', payload: focusedInput})}
+                date={state.date} // Date or null
+                showDatepicker={state.showDatepicker} // Boolean
+            />
                 {apod.media_type === "image" ? (
-                    <img className="image" alt={apod.title} src={apod.url} width='640' height='390' />
+                    <Img className="image" alt={apod.title} src={apod.url} width='640' height='390' />
                 ) : (
                     <iframe src={apod.url}  
                     width='640'
@@ -69,10 +134,11 @@ function Apod() {
                     title={apod.title} />
                 )}
             </ImgContainer>
-            <Explination>
+            <Explination className='explination'>
+            
                 {apod.explanation} 
                 <br /> 
-                <Date className="date">{apod.date}</Date>
+                <Date className="date" id='date'>{apod.date}</Date>
                 <br /> 
                 {apod.copyright}
             </Explination>
